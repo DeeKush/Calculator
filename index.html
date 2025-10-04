@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
     <title>Calculator</title>
     <style>
@@ -14,12 +15,11 @@
             justify-content: center;
             align-items: center;
             font-family: Arial, Helvetica, sans-serif;
+            height: 100vh;
         }
 
         .container {
             padding: 20px;
-            margin-top: 30px;
-            margin-bottom: 20px;
             width: 310px;
             background-color: #eeedf2;
             border-radius: 15px;
@@ -30,15 +30,6 @@
             justify-content: space-between;
             margin-bottom: 10px;
             color: #454456;
-            /* color: #eeedf2; */
-        }
-
-        .time {
-            align-items: flex-start;
-        }
-
-        .notification {
-            align-self: flex-end;
         }
 
         .menu-icon {
@@ -58,6 +49,7 @@
             justify-content: flex-end;
             align-items: center;
             margin-bottom: 10px;
+            overflow-x: auto;
         }
 
         .value {
@@ -75,9 +67,7 @@
             gap: 10px;
             display: flex;
             flex-wrap: wrap;
-            
             margin-bottom: 20px;
-
         }
 
         .ACEqual {
@@ -93,7 +83,8 @@
             justify-content: center;
             align-items: center;
             font-weight: 600;
-            box-shadow:  5px 5px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
         }
 
         .operators {
@@ -106,8 +97,6 @@
             color: rgb(69, 73, 77);
         }
     </style>
-
-
 </head>
 
 <body>
@@ -123,8 +112,9 @@
 
         <div class="menu-icon"><i class="fa fa-ellipsis-v"></i></div>
         <div class="display-num">
-            <div class="value">456X8</div>
+            <div class="value" id="display">0</div>
         </div>
+
         <div class="symbols">
             <div>@</div>
             <div>#</div>
@@ -132,29 +122,74 @@
             <div>^</div>
             <div>!</div>
         </div>
+
         <div class="digits">
-            <div class="ACEqual">AC</div>
-            <div class="operators">()</div>
-            <div class="operators">%</div>
-            <div class="operators">/</div>
-            <div class="num">7</div>
-            <div class="num">8</div>
-            <div class="num">9</div>
-            <div class="operators">X</div>
-            <div class="num">4</div>
-            <div class="num">5</div>
-            <div class="num">6</div>
-            <div class="operators">-</div>
-            <div class="num">1</div>
-            <div class="num">2</div>
-            <div class="num">3</div>
-            <div class="operators">+</div>
-            <div class="num">0</div>
-            <div class="num">.</div>
-            <div class="num">B</div>
-            <div class="ACEqual">=</div>
+            <div class="ACEqual" data-value="AC">AC</div>
+            <div class="operators" data-value="()">()</div>
+            <div class="operators" data-value="%">%</div>
+            <div class="operators" data-value="/">/</div>
+
+            <div class="num" data-value="7">7</div>
+            <div class="num" data-value="8">8</div>
+            <div class="num" data-value="9">9</div>
+            <div class="operators" data-value="*">X</div>
+
+            <div class="num" data-value="4">4</div>
+            <div class="num" data-value="5">5</div>
+            <div class="num" data-value="6">6</div>
+            <div class="operators" data-value="-">-</div>
+
+            <div class="num" data-value="1">1</div>
+            <div class="num" data-value="2">2</div>
+            <div class="num" data-value="3">3</div>
+            <div class="operators" data-value="+">+</div>
+
+            <div class="num" data-value="0">0</div>
+            <div class="num" data-value=".">.</div>
+            <div class="num" data-value="B">B</div>
+            <div class="ACEqual" data-value="=">=</div>
         </div>
     </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('.digits div');
+        let currentInput = '';
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.getAttribute('data-value');
+
+                if (value === 'AC') {
+                    currentInput = '';
+                    display.textContent = '0';
+                } 
+                else if (value === 'B') {
+                    currentInput = currentInput.slice(0, -1);
+                    display.textContent = currentInput || '0';
+                } 
+                else if (value === '=') {
+                    try {
+                        // Replace X with * for evaluation
+                        const result = eval(currentInput.replace(/X/g, '*'));
+                        display.textContent = result;
+                        currentInput = result.toString();
+                    } catch {
+                        display.textContent = 'Error';
+                        currentInput = '';
+                    }
+                } 
+                else {
+                    if (display.textContent === '0' && !isNaN(value)) {
+                        currentInput = value;
+                    } else {
+                        currentInput += value;
+                    }
+                    display.textContent = currentInput;
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
